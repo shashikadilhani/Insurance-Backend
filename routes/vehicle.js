@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require("../db");
 
-router.get("/all", async (req, res) => {
+router.get("/get", async (req, res) => {
     const user_id = req.query.id;
     const result = await db.query("SELECT * FROM vehicle WHERE user_id = ?", user_id);
     res.send({
@@ -33,10 +33,10 @@ router.post("/new", async (req, res) => {
     }
 });
 
-router.delete("/delete", async (req, res) => {
+router.get("/delete", async (req, res) => {
     const vehicleId = req.query.id;
     const result = await db.query("DELETE FROM vehicle WHERE vehicle_ID = ?", vehicleId);
-    console.log(result);
+    res.send({error: false});
 });
 
 router.put("/update", async (req, res) => {

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require("../db");
 
-router.get("/all", async (req, res) => {
+router.get("/get", async (req, res) => {
     const user_id = req.query.id;
     const result = await db.query("SELECT * FROM bulding WHERE user_id = ?", user_id);
     res.send({
