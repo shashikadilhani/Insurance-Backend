@@ -78,7 +78,7 @@ router.post("/new", async (req, res) => {
   ) {
     if (result.length > 0) {
       res.send({
-        message: "user already regisrerd for this email"
+        message: "user already registered for this email"
       });
     } else {
       connection.query("INSERT INTO users SET ?", users, function(
