@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 14, 2019 at 02:04 PM
+-- Generation Time: Oct 15, 2019 at 08:44 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.6
 
@@ -63,7 +63,11 @@ INSERT INTO `bulding` (`id`, `estimate_Value`, `address`, `type`, `user_id`) VAL
 --
 
 CREATE TABLE `bulling_quatation` (
-  `Cover_Type` int(11) NOT NULL
+  `Cover_Type` int(11) NOT NULL,
+  `quotation_ID` int(11) NOT NULL,
+  `broker_ID` int(11) NOT NULL,
+  `building_ID` int(11) NOT NULL,
+  `customer_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -223,8 +227,8 @@ INSERT INTO `users` (`user_id`, `fullname`, `address`, `city`, `phone_num`, `nic
 (7, 'Ravindu Kulasinghe', 'No 62/3/1,Ratnapura', '', '0715326215', '951751286v', '$2b$10$97W5a1WWYiCLtQlScrjfs.PuV5hZaKoQr9vRpkRuv2Jt9MyVHZL.C', 'ravindu@gmail.com', 2, 0),
 (8, 'Ravindu Kulasinghe', 'No 62/3/1,Ratnapura', '', '0715326215', '951751286v', '$2b$10$97W5a1WWYiCLtQlScrjfs.PuV5hZaKoQr9vRpkRuv2Jt9MyVHZL.C', 'ravindu@gmail.com', 3, 1),
 (9, 'Bisendi Kulasinghe', 'efasdfasdfasdf', 'Galle', '0774625226', '951751294v', '$2b$10$7/Y8QI7qUkoFJNlSZJgxVO1irtvpwa0Fo.Dqjvyk6PlOEeLBQeRKi', 'testadmin@ins.com', 1, 1),
-(10, 'Test Broker', 'Ngdgknfsz;dgn', 'Galle', '123456', '9148415154', '$2b$10$7/Y8QI7qUkoFJNlSZJgxVO1irtvpwa0Fo.Dqjvyk6PlOEeLBQeRKi', 'testbroker@ins.com', 3, 0),
-(11, 'Test Customer', 'sfzdfzd', 'Galle', '0774625226', '951751294v', '$2b$10$IwiBIFmm06WA3jQwplw5l.uHs6RTwXlQ4pn.DrD5ubfl2Sv7fKm1m', 'testcustomer@ins.com', 2, 0);
+(11, 'Test Customer', 'sfzdfzd', 'Galle', '0774625226', '951751294v', '$2b$10$IwiBIFmm06WA3jQwplw5l.uHs6RTwXlQ4pn.DrD5ubfl2Sv7fKm1m', 'testcustomer@ins.com', 2, 0),
+(12, 'Dilan Sachintha', 'abcd', 'Galle', '1234567890', '123456789', '$2b$10$5pr7TH/nBvbrPDh.fqJQLupHV/UmJVAH7sQzuTIpvU1/vcdbgkEzm', 'dilansachinthanos@gmail.com', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -237,7 +241,7 @@ CREATE TABLE `vehicle` (
   `Model` varchar(20) NOT NULL,
   `type` varchar(50) NOT NULL,
   `number` varchar(50) NOT NULL,
-  `Mauf_Year` date NOT NULL,
+  `Mauf_Year` varchar(10) NOT NULL,
   `Market_Value` double NOT NULL,
   `v_usage` varchar(200) NOT NULL,
   `fugi_type` varchar(20) NOT NULL,
@@ -250,8 +254,8 @@ CREATE TABLE `vehicle` (
 --
 
 INSERT INTO `vehicle` (`vehicle_ID`, `Model`, `type`, `number`, `Mauf_Year`, `Market_Value`, `v_usage`, `fugi_type`, `meta`, `user_id`) VALUES
-(4, 'ggggggggggg', 'anc', '1998', '0000-00-00', 123456789, '12', 'diesel', '', 11),
-(5, 'ggggggggggg', 'anc', '1999', '0000-00-00', 123456789, '12', 'petrol', '', 11);
+(15, 'vb', 'vb', 'cfvb', 'vb', 0, 'vb', 'vb', 'vbn', 11),
+(16, 'qwsdf', 'qasd', 'sdfgh', 'qwsd', 0, 'qwe', 'qwde', 'qwed', 11);
 
 -- --------------------------------------------------------
 
@@ -261,7 +265,10 @@ INSERT INTO `vehicle` (`vehicle_ID`, `Model`, `type`, `number`, `Mauf_Year`, `Ma
 
 CREATE TABLE `vehicle_quatation` (
   `Quatation_ID` int(11) NOT NULL,
-  `Insurance_Type` varchar(50) NOT NULL
+  `Insurance_Type` varchar(50) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `vehicle_ID` int(11) NOT NULL,
+  `broker_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -280,6 +287,14 @@ ALTER TABLE `broker`
 ALTER TABLE `bulding`
   ADD PRIMARY KEY (`id`),
   ADD KEY `property constraint` (`user_id`);
+
+--
+-- Indexes for table `bulling_quatation`
+--
+ALTER TABLE `bulling_quatation`
+  ADD KEY `a` (`broker_ID`),
+  ADD KEY `b` (`building_ID`),
+  ADD KEY `c` (`customer_ID`);
 
 --
 -- Indexes for table `clam_report`
@@ -361,7 +376,10 @@ ALTER TABLE `vehicle`
 -- Indexes for table `vehicle_quatation`
 --
 ALTER TABLE `vehicle_quatation`
-  ADD PRIMARY KEY (`Quatation_ID`);
+  ADD PRIMARY KEY (`Quatation_ID`),
+  ADD KEY `user constraint` (`customer_id`),
+  ADD KEY `broker constraint` (`broker_ID`),
+  ADD KEY `vehi constraint` (`vehicle_ID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -437,13 +455,13 @@ ALTER TABLE `quotation`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `vehicle`
 --
 ALTER TABLE `vehicle`
-  MODIFY `vehicle_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `vehicle_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `vehicle_quatation`
@@ -462,6 +480,14 @@ ALTER TABLE `bulding`
   ADD CONSTRAINT `property constraint` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
+-- Constraints for table `bulling_quatation`
+--
+ALTER TABLE `bulling_quatation`
+  ADD CONSTRAINT `a` FOREIGN KEY (`broker_ID`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `b` FOREIGN KEY (`building_ID`) REFERENCES `bulding` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `c` FOREIGN KEY (`customer_ID`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
@@ -472,6 +498,14 @@ ALTER TABLE `users`
 --
 ALTER TABLE `vehicle`
   ADD CONSTRAINT `vehicle constraint` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `vehicle_quatation`
+--
+ALTER TABLE `vehicle_quatation`
+  ADD CONSTRAINT `broker constraint` FOREIGN KEY (`broker_ID`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `user constraint` FOREIGN KEY (`customer_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `vehi constraint` FOREIGN KEY (`vehicle_ID`) REFERENCES `vehicle` (`vehicle_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -11,23 +11,32 @@ router.get("/get", async (req, res) => {
     });
 });
 
+router.get("/getOne", async (req, res) => {
+    const vehicle_id = req.query.id;
+    const result = await db.query("SELECT * FROM vehicle WHERE vehicle_ID = ?", vehicle_id);
+    res.send({
+        error: false,
+        data: result
+    });
+});
+
 router.post("/new", async (req, res) => {
-    //console.log(req.body)
     const vehicle = {
         Model: req.body.model,
         type: req.body.type,
         number: req.body.number,
         Mauf_Year: req.body.manfYear,
         Market_Value: req.body.marketVal,
-        v_usage: req.body.vUsage,
+        v_usage: req.body.vehiUsage,
         fugi_type: req.body.fuelType,
         meta: req.body.meta,
         user_id: req.body.userId
     };
-    let tempResult = await db.query(`SELECT * FROM vehicle WHERE number = ${vehicle.number}`);
+    let tempResult = await db.query(`SELECT * FROM vehicle WHERE number = '${vehicle.number}'`);
     if (tempResult.length > 0) {
-        res.send({message: "There is a vehicle already registered with this number!!!"});
+        res.send({error: true, message: "There is a vehicle already registered with this number!!!"});
     } else {
+        console.log(tempResult)
         const result = await db.query(`INSERT INTO vehicle SET ?`, vehicle);
         res.send({ error: false, data: "" });
     }
@@ -39,22 +48,22 @@ router.get("/delete", async (req, res) => {
     res.send({error: false});
 });
 
-router.put("/update", async (req, res) => {
-    const vehicleId = req.query.id;
+router.post("/update", async (req, res) => {
+    const vehicleId = req.body.vehicle_ID;
     const vehicle = {
         Model: req.body.model,
         type: req.body.type,
         number: req.body.number,
         Mauf_Year: req.body.manfYear,
         Market_Value: req.body.marketVal,
-        v_usage: req.body.vUsage,
+        v_usage: req.body.vehiUsage,
         fugi_type: req.body.fuelType,
         meta: req.body.meta,
         user_id: req.body.userId
     };
     let tempResult = await db.query(`SELECT * FROM vehicle WHERE vehicle_ID = ${vehicleId}`);
     if (tempResult.length == 0) {
-        res.send({message: "There is no vehicle registered!!!"});
+        res.send({error: true, message: "There is no vehicle registered!!!"});
     } else {
         console.log(vehicleId)
         console.log(vehicle)
