@@ -7,14 +7,25 @@ const property = require("./property");
 router.use("/vehicle", vehicle);
 router.use("/property", property);
 
-router.post("/quotationReq", (req, res) => {
-    const vehicle_ID = req.body.vehicle_ID;
-    const property_ID = req.body.property_ID;
-    const user_ID = req.body.user_ID;
-    if (vehicle_ID && !property_ID) {
-
-    } else if (!vehicle_ID && property_ID) {
-
+router.post("/quotationReq", async (req, res) => {
+    if (req.body.vehicle_id && !req.body.building_id) {
+        const tempObj = {
+            vehicle_id: req.body.vehicle_id,
+            customer_id: req.body.customer_id,
+            broker_id: req.body.broker_id
+        };
+        const result = await db.query(`insert into customer_request
+        set ?`, tempObj);
+        res.send({error: false, message: "success"});
+    } else if (!req.body.vehicle_id && req.body.building_id) {
+        const tempObj = {
+            building_id: req.body.building_id,
+            customer_id: req.body.customer_id,
+            broker_id: req.body.broker_id
+        };
+        const result = await db.query(`insert into customer_request
+        set ?`, tempObj);
+        res.send({error: false, message: "success"});
     } else {
         res.send({error: true, message: "Two properties cannot exist!!!"});
     }

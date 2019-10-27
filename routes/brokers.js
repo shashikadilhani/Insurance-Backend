@@ -100,4 +100,24 @@ router.post("/new", async (req, res) => {
   });
 });
 
+router.get('/quotationRequests', async (req, res) => {
+  const brokerId = req.query.id;
+  const result = await db.query(`SELECT fullname,address,city,phone_num,email,nic,
+  REQUEST_ID,vehicle_id,building_id FROM (SELECT * FROM customer_request WHERE broker_id='${brokerId}') 
+  AS a INNER JOIN users WHERE a.customer_id=users.user_id`);
+  res.send(result);
+});
+
+router.get('/vehicleQuotation', async (req, res) => {
+  const vehicleId = req.query.requestId;
+  const result = await db.query(`SELECT * from vehicle where vehicle_ID=?`, vehicleId);
+  res.send(result);
+});
+
+router.get('/buildingQuotation', async (req, res) => {
+  const buildingId = req.query.buildingId;
+  const result = await db.query(`SELECT * from bulding where id=?`, buildingId);
+  res.send(result);
+});
+
 module.exports = router;
