@@ -109,15 +109,20 @@ router.get('/quotationRequests', async (req, res) => {
 });
 
 router.get('/vehicleQuotation', async (req, res) => {
-  const vehicleId = req.query.requestId;
+  const vehicleId = req.query.id;
   const result = await db.query(`SELECT * from vehicle where vehicle_ID=?`, vehicleId);
   res.send(result);
 });
 
 router.get('/buildingQuotation', async (req, res) => {
-  const buildingId = req.query.buildingId;
+  const buildingId = req.query.id;
   const result = await db.query(`SELECT * from bulding where id=?`, buildingId);
   res.send(result);
+});
+
+router.get('/calculateQuotation', async (req, res) => {
+  console.log(req.query.id);
+  res.send({error: "success"});
 });
 
 module.exports = router;
