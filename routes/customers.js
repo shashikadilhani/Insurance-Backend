@@ -3,9 +3,9 @@ const router = express.Router();
 const db = require("../db");
 
 const vehicle = require("./vehicle");
-const property = require("./property");
+const building = require("./building");
 router.use("/vehicle", vehicle);
-router.use("/property", property);
+router.use("/building", building);
 
 router.post("/quotationReq", async (req, res) => {
     if (req.body.vehicle_id && !req.body.building_id) {
