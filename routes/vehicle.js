@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require("../db");
+const IncomingForm = require('formidable').IncomingForm;
 
 router.get("/get", async (req, res) => {
     const user_id = req.query.id;
@@ -82,7 +83,7 @@ router.post('/new-claim', async (req, res) => {
         var path = require('path');
         filePath = path.resolve(filePath);
         fileData.push({
-            buildingClaimId: '',
+            vehicleClaimId: '',
             location: filePath
         });
         file.path = filePath;
@@ -92,9 +93,10 @@ router.post('/new-claim', async (req, res) => {
         tempObj[field] = data
     });
     form.on('end', async () => {
+        console.log(tempObj)
         let result = await db.query(`insert into vehicle_claims set ?`, tempObj);
         fileData.forEach(async element => {
-            element.buildingClaimId = result.insertId;
+            element.vehicleClaimId = result.insertId;
             await db.query(`insert into photos set ?`, element);
         });
         res.send({ error: false, data: "" });

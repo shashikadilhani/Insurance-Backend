@@ -103,9 +103,40 @@ router.post("/new", async (req, res) => {
 router.get('/quotationRequests', async (req, res) => {
   const brokerId = req.query.id;
   const result = await db.query(`SELECT fullname,address,city,phone_num,email,nic,
-  REQUEST_ID,vehicle_id,building_id FROM (SELECT * FROM customer_request WHERE broker_id='${brokerId}') 
+  REQUEST_ID,vehicle_id,building_id,is_Accepted FROM (SELECT * FROM customer_request WHERE broker_id='${brokerId}' and is_Accepted<>1) 
   AS a INNER JOIN users WHERE a.customer_id=users.user_id`);
+  console.log(result)
   res.send(result);
+});
+
+router.get('/acceptedQuotationRequests', async (req, res) => {
+  const brokerId = req.query.id;
+  const result = await db.query(`SELECT fullname,address,city,phone_num,email,nic,
+  REQUEST_ID,vehicle_id,building_id,customer_acceptance,policy_status FROM (SELECT * FROM customer_request WHERE broker_id='${brokerId}' and is_Accepted=1) 
+  AS a INNER JOIN users WHERE a.customer_id=users.user_id`);
+  console.log(result)
+  res.send(result);
+});
+
+router.get('/sendPolicy', async (req, res) => {
+  const quotationId = req.query.id;
+  console.log(quotationId)
+  const result = await db.query(`update customer_request set policy_status=1 where Request_ID=?`, quotationId);
+  res.send({ error: false, data:result });
+});
+
+router.get('/acceptQuotation', async (req, res) => {
+  const quotationId = req.query.id;
+  console.log(quotationId)
+  const result = await db.query(`update customer_request set is_Accepted=1 where Request_ID=?`, quotationId);
+  res.send({ error: false, data:result });
+});
+
+router.get('/rejectQuotation', async (req, res) => {
+  const quotationId = req.query.id;
+  console.log(quotationId)
+  const result = await db.query(`update customer_request set is_Accepted=2 where Request_ID=?`, quotationId);
+  res.send({ error: false, data:result });
 });
 
 router.get('/vehicleQuotation', async (req, res) => {
@@ -118,11 +149,6 @@ router.get('/buildingQuotation', async (req, res) => {
   const buildingId = req.query.id;
   const result = await db.query(`SELECT * from bulding where id=?`, buildingId);
   res.send(result);
-});
-
-router.get('/calculateQuotation', async (req, res) => {
-  console.log(req.query.id);
-  res.send({error: "success"});
 });
 
 router.get('/building/claims', async (req, res) => {
@@ -147,6 +173,32 @@ router.get('/building/getDownloadLinks', async (req, res) => {
   console.log(claimId)
   const result = await db.query(`select location from (select * from building_claims where
        id = ?) as a inner join photos where buildingClaimId=id`, claimId);
+  res.send({ error: false, data: result }) 
+});
+
+
+router.get('/vehicle/claims', async (req, res) => {
+  const userId = req.query.id;
+  console.log(this.userId)
+  let result = await db.query(`select * from vehicle_claims where brokerid=?`, userId);
+  res.send({ error: false, data: result });
+});
+
+router.get("/vehicle/getOne", async (req, res) => {
+  const vehicle_id = req.query.id;
+  //console.log(building_id)
+  const result = await db.query("SELECT * FROM vehicle WHERE vehicle_ID = ?", vehicle_id);
+  res.send({
+      error: false,
+      data: result
+  });
+});
+
+router.get('/vehicle/getDownloadLinks', async (req, res) => {
+  const claimId = req.query.id;
+  console.log(claimId)
+  const result = await db.query(`select location from (select * from vehicle_claims where
+       id = ?) as a inner join photos where vehicleClaimId=id`, claimId);
   res.send({ error: false, data: result }) 
 });
 
