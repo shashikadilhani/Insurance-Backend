@@ -16,7 +16,7 @@ router.post("/quotationReq", async (req, res) => {
         };
         const result = await db.query(`insert into customer_request
         set ?`, tempObj);
-        res.send({error: false, message: "success"});
+        res.send({ error: false, message: "success" });
     } else if (!req.body.vehicle_id && req.body.building_id) {
         const tempObj = {
             building_id: req.body.building_id,
@@ -25,10 +25,58 @@ router.post("/quotationReq", async (req, res) => {
         };
         const result = await db.query(`insert into customer_request
         set ?`, tempObj);
-        res.send({error: false, message: "success"});
+        res.send({ error: false, message: "success" });
     } else {
-        res.send({error: true, message: "Two properties cannot exist!!!"});
+        res.send({ error: true, message: "Two properties cannot exist!!!" });
     }
+});
+
+router.get('/quotations', async (req, res) => {
+    const customer_id = req.query.id;
+    console.log(customer_id);
+    const result = await db.query(`select * from customer_request where customer_id = ? and policy_status <> 3`, customer_id);
+    res.send({ error: false, data: result });
+});
+
+router.get('/getAllQuotations', async (req, res) => {
+    const result = await db.query(`select * from quotation`);
+    res.send({ error: false, data: result });
+});
+
+router.get('/downloadDocument', async (req, res) => {
+    console.log(req.query.filePath)
+    res.download(req.query.filePath);
+});
+
+router.post('/acceptQuotation', async (req, res) => {
+    const quotationId = req.body.quotationId;
+    const requestId = req.body.requestId;
+    console.log(requestId)
+    console.log(quotationId)
+    const result = await db.query(`update customer_request set customer_acceptance=1,
+     quotation_id=${quotationId} where Request_ID=${requestId}`);
+    res.send({ error: false, data: result });
+});
+
+router.get('/acceptPolicy', async (req, res) => {
+    const requestId = req.query.requestId;
+    console.log(requestId)
+    const result = await db.query(`update customer_request set policy_status=3 where Request_ID=${requestId}`);
+    res.send({ error: false, data: result });
+});
+
+router.get('/rejectQuotation', async (req, res) => {
+    const requestId = req.query.requestId;
+    console.log(requestId)
+    const result = await db.query(`update customer_request set customer_acceptance=2 where Request_ID=${requestId}`);
+    res.send({ error: false, data: result });
+});
+
+router.get('/rejectPolicy', async (req, res) => {
+    const requestId = req.query.requestId;
+    console.log(requestId)
+    const result = await db.query(`update customer_request set policy_status=4 where Request_ID=${requestId}`);
+    res.send({ error: false, data: result });
 });
 
 module.exports = router;

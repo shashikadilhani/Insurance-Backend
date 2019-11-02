@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 var connection = require("./config");
 const db = require("../db");
+const IncomingForm = require('formidable').IncomingForm;
 
 router.get("/getAll", async (req, res) => {
   let users = await db.query(
@@ -72,7 +73,7 @@ router.post("/new", async (req, res) => {
 
   console.log(user);
 
-  connection.query("SELECT * FROM users WHERE email = ?", [email], function(
+  connection.query("SELECT * FROM users WHERE email = ?", [email], function (
     err,
     result
   ) {
@@ -81,7 +82,7 @@ router.post("/new", async (req, res) => {
         message: "user already registered for this email"
       });
     } else {
-      connection.query("INSERT INTO users SET ?", users, function(
+      connection.query("INSERT INTO users SET ?", users, function (
         error,
         results
       ) {
@@ -98,6 +99,82 @@ router.post("/new", async (req, res) => {
       });
     }
   });
+});
+
+router.get('/policies', async (req, res) => {
+  const result = await db.query(`select * from policy`);
+  res.send({ error: false, data: result });
+});
+
+router.post('/new-policy', async (req, res) => {
+  const tempObj = {};
+  var form = new IncomingForm();
+
+  form.on('fileBegin', function (name, file) {
+    let filePath = __dirname + '/../resources/' + Date.now() + file.name;
+    var path = require('path');
+    filePath = path.resolve(filePath);
+    file.path = filePath;
+    tempObj['location'] = filePath;
+  });
+
+  form.on('field', (field, data) => {
+    tempObj[field] = data
+  });
+  form.on('end', async () => {
+    console.log(tempObj)
+    let result = await db.query(`insert into policy set ?`, tempObj);
+    res.send({ error: false, data: "" });
+  });
+  form.parse(req);
+});
+
+router.get('/downloadDocument', async (req, res) => {
+  console.log(req.query.filePath)
+  res.download(req.query.filePath);
+});
+
+router.get('/quotations', async (req, res) => {
+  const result = await db.query(`select * from quotation`);
+  res.send({ error: false, data: result });
+});
+
+
+router.post('/new-quotation', async (req, res) => {
+  const tempObj = {};
+  var form = new IncomingForm();
+
+  form.on('fileBegin', function (name, file) {
+    let filePath = __dirname + '/../resources/' + Date.now() + file.name;
+    var path = require('path');
+    filePath = path.resolve(filePath);
+    file.path = filePath;
+    tempObj['location'] = filePath;
+  });
+
+  form.on('field', (field, data) => {
+    console.log(field)
+    console.log(data)
+    tempObj[field] = data;
+  });
+  form.on('end', async () => {
+    console.log(tempObj)
+    let result = await db.query(`insert into quotation set ?`, tempObj);
+    res.send({ error: false, data: "" });
+  });
+  form.parse(req);
+});
+
+router.get('/policies-delete', async (req, res) => {
+  const policyId = req.query.id;
+  const result = await db.query(`delete from policy where policy_id = ?`, policyId);
+  res.send({ error: false, data: result });
+});
+
+router.get('/quotations-delete', async (req, res) => {
+  const quotationId = req.query.id;
+  const result = await db.query(`delete from quotation where Quotation_ID = ?`, quotationId);
+  res.send({ error: false, data: result });
 });
 
 router.get('/quotationRequests', async (req, res) => {
@@ -122,21 +199,21 @@ router.get('/sendPolicy', async (req, res) => {
   const quotationId = req.query.id;
   console.log(quotationId)
   const result = await db.query(`update customer_request set policy_status=1 where Request_ID=?`, quotationId);
-  res.send({ error: false, data:result });
+  res.send({ error: false, data: result });
 });
 
 router.get('/acceptQuotation', async (req, res) => {
   const quotationId = req.query.id;
   console.log(quotationId)
   const result = await db.query(`update customer_request set is_Accepted=1 where Request_ID=?`, quotationId);
-  res.send({ error: false, data:result });
+  res.send({ error: false, data: result });
 });
 
 router.get('/rejectQuotation', async (req, res) => {
   const quotationId = req.query.id;
   console.log(quotationId)
   const result = await db.query(`update customer_request set is_Accepted=2 where Request_ID=?`, quotationId);
-  res.send({ error: false, data:result });
+  res.send({ error: false, data: result });
 });
 
 router.get('/vehicleQuotation', async (req, res) => {
@@ -163,8 +240,8 @@ router.get("/building/getOne", async (req, res) => {
   //console.log(building_id)
   const result = await db.query("SELECT * FROM bulding WHERE id = ?", building_id);
   res.send({
-      error: false,
-      data: result
+    error: false,
+    data: result
   });
 });
 
@@ -173,7 +250,7 @@ router.get('/building/getDownloadLinks', async (req, res) => {
   console.log(claimId)
   const result = await db.query(`select location from (select * from building_claims where
        id = ?) as a inner join photos where buildingClaimId=id`, claimId);
-  res.send({ error: false, data: result }) 
+  res.send({ error: false, data: result })
 });
 
 
@@ -189,8 +266,8 @@ router.get("/vehicle/getOne", async (req, res) => {
   //console.log(building_id)
   const result = await db.query("SELECT * FROM vehicle WHERE vehicle_ID = ?", vehicle_id);
   res.send({
-      error: false,
-      data: result
+    error: false,
+    data: result
   });
 });
 
@@ -199,7 +276,7 @@ router.get('/vehicle/getDownloadLinks', async (req, res) => {
   console.log(claimId)
   const result = await db.query(`select location from (select * from vehicle_claims where
        id = ?) as a inner join photos where vehicleClaimId=id`, claimId);
-  res.send({ error: false, data: result }) 
+  res.send({ error: false, data: result })
 });
 
 module.exports = router;
