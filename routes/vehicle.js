@@ -72,4 +72,55 @@ router.post("/update", async (req, res) => {
     }
 });
 
+router.post('/new-claim', async (req, res) => {
+    const tempObj = { };
+    var form = new IncomingForm();
+    const fileData = [];
+
+    form.on('fileBegin', function (name, file){
+        let filePath = __dirname + '/../resources/' + Date.now() + file.name;
+        var path = require('path');
+        filePath = path.resolve(filePath);
+        fileData.push({
+            buildingClaimId: '',
+            location: filePath
+        });
+        file.path = filePath;
+    });
+
+    form.on('field', (field, data) => {
+        tempObj[field] = data
+    });
+    form.on('end', async () => {
+        let result = await db.query(`insert into vehicle_claims set ?`, tempObj);
+        fileData.forEach(async element => {
+            element.buildingClaimId = result.insertId;
+            await db.query(`insert into photos set ?`, element);
+        });
+        res.send({ error: false, data: "" });
+    });
+    form.parse(req);
+});
+
+router.get('/claims', async (req, res) => {
+    const userId = req.query.id;
+    console.log(this.userId)
+    let result = await db.query(`select * from vehicle_claims where userId=?`, userId);
+    res.send({ error: false, data: result });
+});
+
+router.get('/delete-claim/delete', async (req, res) => {
+    const claimId = req.query.id;
+    let result = await db.query(`delete from vehicle_claims where id = ?`, claimId);
+    res.send({ error: false });
+});
+
+router.get('/getDownloadLinks', async (req, res) => {
+    const claimId = req.query.id;
+    console.log(claimId)
+    const result = await db.query(`select location from (select * from vehicle_claims where
+         id = ?) as a inner join photos where vehicleClaimId=id`, claimId);
+    res.send({ error: false, data: result }) 
+});
+
 module.exports = router;

@@ -125,4 +125,29 @@ router.get('/calculateQuotation', async (req, res) => {
   res.send({error: "success"});
 });
 
+router.get('/building/claims', async (req, res) => {
+  const userId = req.query.id;
+  console.log(this.userId)
+  let result = await db.query(`select * from building_claims where brokerid=?`, userId);
+  res.send({ error: false, data: result });
+});
+
+router.get("/building/getOne", async (req, res) => {
+  const building_id = req.query.id;
+  //console.log(building_id)
+  const result = await db.query("SELECT * FROM bulding WHERE id = ?", building_id);
+  res.send({
+      error: false,
+      data: result
+  });
+});
+
+router.get('/building/getDownloadLinks', async (req, res) => {
+  const claimId = req.query.id;
+  console.log(claimId)
+  const result = await db.query(`select location from (select * from building_claims where
+       id = ?) as a inner join photos where buildingClaimId=id`, claimId);
+  res.send({ error: false, data: result }) 
+});
+
 module.exports = router;

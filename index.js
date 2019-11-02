@@ -12,7 +12,7 @@ const cors = require("cors");
 
 const port = process.env.port || 3001;
 
-app.use(express.static("uploads"));
+app.use(express.static("resources"));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -22,6 +22,12 @@ app.use("/api/login", login);
 app.use("/api/brokers", brokers);
 app.use("/api/customers", customers);
 app.use("/api/admins", admins);
+
+app.get('/getImage', (req, res) => {
+  console.log('download called')
+  res.sendFile(req.query.filePath);
+});
+
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}. . . `);
 });
