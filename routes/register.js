@@ -3,6 +3,7 @@ const router = express.Router();
 var connection = require("./config");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
+const db = require("../db");
 
 router.post("/new", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
@@ -59,6 +60,17 @@ router.post("/new", async (req, res) => {
       });
     }
   });
+});
+
+
+router.get('/checkEmailForSignUp', async (req, res) => {
+  const email = req.query.email;
+  const result = await db.query(`select * from users where email = ?`, email);
+  if (result.length != 0) {
+    res.send({ error: true });
+  } else {
+    res.send({ error: false });
+  }
 });
 
 module.exports = router;

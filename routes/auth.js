@@ -72,6 +72,7 @@ router.post("/user", async (req, res) => {
   //   console.log(validPassword);
 });
 
+
 function validate(req) {
   const schema = {
     email: Joi.string()
