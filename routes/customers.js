@@ -91,4 +91,28 @@ router.get('/premiumHistory', async (req, res) => {
     res.send({ error: false, data: result });
 });
 
+router.get('/premiumData', async (req, res) => {
+    const Quatation_ID = req.query.id;
+    console.log(Quatation_ID)
+    const result = await db.query(`select * from premum where Quatation_ID = ?`, Quatation_ID);
+    res.send({ error: false, data: result });
+});
+
+router.get('/unpaidPremiumData', async (req, res) => {
+    const Quatation_ID = req.query.id;
+    console.log(Quatation_ID)
+    const result = await db.query(`select * from premum where Quatation_ID = ? and notification = 0`, Quatation_ID);
+    res.send({ error: false, data: result });
+});
+
+router.post('/payPremium', async (req, res) => {
+    console.log(req.body)
+    const tempObj = {
+        notification: req.body.notification,
+        Payment_date: req.body.Payment_date
+    }
+    const result = await db.query(`update premum set ? where Premum_ID = ?`, [tempObj, req.body.Premum_ID]);
+    res.send({ error: false, data: result });
+});
+
 module.exports = router;
