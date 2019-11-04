@@ -31,7 +31,8 @@ router.post("/new", async (req, res) => {
         v_usage: req.body.vehiUsage,
         fugi_type: req.body.fuelType,
         meta: req.body.meta,
-        user_id: req.body.userId
+        user_id: req.body.userId,
+        insuranceType: req.body.insuranceType
     };
     let tempResult = await db.query(`SELECT * FROM vehicle WHERE number = '${vehicle.number}'`);
     if (tempResult.length > 0) {

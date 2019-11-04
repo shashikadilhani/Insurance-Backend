@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2019 at 12:09 PM
+-- Generation Time: Nov 04, 2019 at 04:58 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.6
 
@@ -27,35 +27,28 @@ USE `insurance_system`;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `broker`
---
-
-CREATE TABLE `broker` (
-  `broker_ID` int(11) NOT NULL,
-  `City` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `building_claims`
 --
 
 CREATE TABLE `building_claims` (
   `id` int(11) NOT NULL,
-  `building_id` int(11) NOT NULL,
+  `buildingId` int(11) NOT NULL,
   `date` varchar(20) NOT NULL,
   `time` varchar(20) NOT NULL,
-  `casualties` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `casualties` int(100) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `brokerid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `building_claims`
 --
 
-INSERT INTO `building_claims` (`id`, `building_id`, `date`, `time`, `casualties`, `user_id`) VALUES
-(1, 5, '2019-10-25', '12:25 AM', 27, 11);
+INSERT INTO `building_claims` (`id`, `buildingId`, `date`, `time`, `casualties`, `userId`, `brokerid`) VALUES
+(23, 5, 'asd', 'ads', 12, 11, 12),
+(24, 5, 'asdasf', 'asfasf', 21, 11, 12),
+(25, 6, '2019-10-25', '12:00', 120, 11, 12),
+(26, 6, '12', '12', 21, 11, 13);
 
 -- --------------------------------------------------------
 
@@ -96,17 +89,6 @@ CREATE TABLE `bulling_quatation` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `clam_report`
---
-
-CREATE TABLE `clam_report` (
-  `Clam_ID` int(11) NOT NULL,
-  `Amount` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `customer_request`
 --
 
@@ -116,27 +98,20 @@ CREATE TABLE `customer_request` (
   `customer_id` int(11) NOT NULL,
   `broker_id` int(11) NOT NULL,
   `vehicle_id` int(11) DEFAULT NULL,
-  `building_id` int(11) DEFAULT NULL
+  `building_id` int(11) DEFAULT NULL,
+  `customer_acceptance` int(11) NOT NULL DEFAULT 0,
+  `policy_status` int(11) NOT NULL DEFAULT 0,
+  `policy_id` int(11) DEFAULT NULL,
+  `quotation_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `customer_request`
 --
 
-INSERT INTO `customer_request` (`Request_ID`, `is_Accepted`, `customer_id`, `broker_id`, `vehicle_id`, `building_id`) VALUES
-(5, 0, 11, 12, 16, NULL),
-(6, 0, 11, 12, 16, NULL),
-(7, 0, 11, 12, 15, NULL),
-(8, 0, 11, 12, 16, NULL),
-(10, 0, 11, 12, 15, NULL),
-(11, 0, 11, 12, 15, NULL),
-(12, 0, 11, 12, 15, NULL),
-(13, 0, 11, 12, 15, NULL),
-(14, 0, 11, 12, 15, NULL),
-(15, 0, 11, 12, 15, NULL),
-(16, 0, 11, 13, 15, NULL),
-(18, 0, 11, 12, NULL, 6),
-(19, 0, 11, 12, NULL, 5);
+INSERT INTO `customer_request` (`Request_ID`, `is_Accepted`, `customer_id`, `broker_id`, `vehicle_id`, `building_id`, `customer_acceptance`, `policy_status`, `policy_id`, `quotation_id`) VALUES
+(24, 1, 11, 12, 16, NULL, 1, 3, 7, 6),
+(25, 1, 11, 12, 16, NULL, 1, 3, 7, 6);
 
 -- --------------------------------------------------------
 
@@ -146,33 +121,43 @@ INSERT INTO `customer_request` (`Request_ID`, `is_Accepted`, `customer_id`, `bro
 
 CREATE TABLE `photos` (
   `photo_id` int(11) NOT NULL,
-  `claim_id` int(11) NOT NULL,
-  `location` varchar(100) NOT NULL
+  `buildingClaimId` int(11) DEFAULT NULL,
+  `location` varchar(1000) NOT NULL,
+  `vehicleClaimId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `photos`
+--
+
+INSERT INTO `photos` (`photo_id`, `buildingClaimId`, `location`, `vehicleClaimId`) VALUES
+(27, 23, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572694699245news_thumb_RM1miK20RN.png', NULL),
+(28, 24, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572697079478IMG_20191019_082320.jpg', NULL),
+(29, 25, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572697406788IMG_20191019_082320.jpg', NULL),
+(30, 25, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572697406862news_thumb_JiAvxS9ZVB.png', NULL),
+(31, 25, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572697406863news_thumb_RM1miK20RN.png', NULL),
+(32, 26, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572697420134news_thumb_RM1miK20RN.png', NULL),
+(39, NULL, 'D:\\Projects\\Insurance\\new-insurance-backend\\insurance-backend\\resources\\1572802125865Tulips.jpg', 5);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `poky_message`
+-- Table structure for table `policy`
 --
 
-CREATE TABLE `poky_message` (
-  `Message_ID` int(11) NOT NULL,
-  `M_Date` date NOT NULL,
-  `Message_Des` text NOT NULL
+CREATE TABLE `policy` (
+  `policy_id` int(11) NOT NULL,
+  `location` varchar(1000) NOT NULL,
+  `name` varchar(110) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `policy_document`
+-- Dumping data for table `policy`
 --
 
-CREATE TABLE `policy_document` (
-  `Polidy_ID` int(11) NOT NULL,
-  `Start_date` date NOT NULL,
-  `Due_date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+INSERT INTO `policy` (`policy_id`, `location`, `name`) VALUES
+(7, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572721123643NOTICE', 'Policy 1'),
+(8, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572721131590LICENSE', 'Policy 2');
 
 -- --------------------------------------------------------
 
@@ -182,27 +167,23 @@ CREATE TABLE `policy_document` (
 
 CREATE TABLE `premum` (
   `Premum_ID` int(11) NOT NULL,
-  `Property_ID` int(11) NOT NULL,
-  `Payment_date` date NOT NULL,
-  `Payment_Amount` double NOT NULL,
-  `Quatation_ID` int(11) NOT NULL
+  `Payment_date` varchar(100) DEFAULT NULL,
+  `Payment_Amount` double DEFAULT NULL,
+  `Quatation_ID` int(11) NOT NULL,
+  `notification` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `premum_details`
+-- Dumping data for table `premum`
 --
 
-CREATE TABLE `premum_details` (
-  `Premum_ID` int(11) NOT NULL,
-  `Period` date NOT NULL,
-  `Due_date` date NOT NULL,
-  `Property_ID` int(11) NOT NULL,
-  `Amount` double NOT NULL,
-  `id_Pay` tinyint(1) NOT NULL,
-  `Payment_Ex_Date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+INSERT INTO `premum` (`Premum_ID`, `Payment_date`, `Payment_Amount`, `Quatation_ID`, `notification`) VALUES
+(1, 'aaaa', 124124, 24, 0),
+(2, '11/3/2019, 5:22:31 PM', 676767, 24, 1),
+(3, NULL, 10000, 24, 1),
+(4, NULL, 1.1222222222222222e17, 24, 0),
+(5, NULL, 2.1e125, 24, 0),
+(6, '11/4/2019, 8:05:34 PM', 112345, 25, 1);
 
 -- --------------------------------------------------------
 
@@ -233,8 +214,18 @@ CREATE TABLE `property` (
 --
 
 CREATE TABLE `quotation` (
-  `Quotation_ID` int(11) NOT NULL
+  `Quotation_ID` int(11) NOT NULL,
+  `location` varchar(1000) NOT NULL,
+  `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `quotation`
+--
+
+INSERT INTO `quotation` (`Quotation_ID`, `location`, `name`) VALUES
+(6, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572721198815getting-started.html', 'Quotation 1'),
+(7, '/media/dilan/DiskC/Insurance/insurance-backend/resources/1572721205842Screenshot from 2019-11-02 15-52-57.png', 'Quotation 2');
 
 -- --------------------------------------------------------
 
@@ -287,7 +278,8 @@ INSERT INTO `users` (`user_id`, `fullname`, `address`, `city`, `phone_num`, `nic
 (9, 'Bisendi Kulasinghe', 'efasdfasdfasdf', 'Galle', '0774625226', '951751294v', '$2b$10$7/Y8QI7qUkoFJNlSZJgxVO1irtvpwa0Fo.Dqjvyk6PlOEeLBQeRKi', 'testadmin@ins.com', 1, 1),
 (11, 'Test Customer', 'sfzdfzd', 'Galle', '0774625226', '951751294v', '$2b$10$IwiBIFmm06WA3jQwplw5l.uHs6RTwXlQ4pn.DrD5ubfl2Sv7fKm1m', 'testcustomer@ins.com', 2, 0),
 (12, 'Dilan Sachintha', 'abcd', 'Galle', '1234567890', '123456789', '$2b$10$5pr7TH/nBvbrPDh.fqJQLupHV/UmJVAH7sQzuTIpvU1/vcdbgkEzm', 'dilansachinthanos@gmail.com', 3, 1),
-(13, 'Sachintha Nayanajith', 'abcd efgh', 'Galle', '0711011724', '962991718v', '$2b$10$nxrZKkKsD8aslkuuch83e.MoTJwK5quN1ghO9BDLy3jdYyKnftcJq', 'sachi@ins.com', 3, 1);
+(13, 'Sachintha Nayanajith', 'abcd efgh', 'Galle', '0711011724', '962991718v', '$2b$10$nxrZKkKsD8aslkuuch83e.MoTJwK5quN1ghO9BDLy3jdYyKnftcJq', 'sachi@ins.com', 3, 1),
+(14, 'asfasf asfas', 'agsasg', 'Kelaniya', 'asfasf', 'asasg', '$2b$10$EGpsM2E4cqna29LPsMaBjebq36UQBwo1Y4t.qDr/Ve0uvLAt1sSsu', 'asfasf', 3, 0);
 
 -- --------------------------------------------------------
 
@@ -305,17 +297,20 @@ CREATE TABLE `vehicle` (
   `v_usage` varchar(200) NOT NULL,
   `fugi_type` varchar(20) NOT NULL,
   `meta` varchar(200) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  `insuranceType` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `vehicle`
 --
 
-INSERT INTO `vehicle` (`vehicle_ID`, `Model`, `type`, `number`, `Mauf_Year`, `Market_Value`, `v_usage`, `fugi_type`, `meta`, `user_id`) VALUES
-(15, 'vb', 'vb', 'cfvb', 'vb', 0, 'vb', 'vb', 'vbn', 11),
-(16, 'qwsdf', 'qasd', 'sdfgh', 'qwsd', 0, 'qwe', 'qwde', 'qwed', 11),
-(17, 'aaa', 'aaa', '123412', '1212', 121212, '2112', 'sa', 'asd', 11);
+INSERT INTO `vehicle` (`vehicle_ID`, `Model`, `type`, `number`, `Mauf_Year`, `Market_Value`, `v_usage`, `fugi_type`, `meta`, `user_id`, `insuranceType`) VALUES
+(16, 'qwsdf', 'qasd', 'sdfgh', 'qwsd', 0, 'qwe', 'qwde', 'qwed', 11, NULL),
+(17, 'aaa', 'aaa', '123412', '1212', 121212, '2112', 'sa', 'asd', 11, NULL),
+(18, 'kjafs', 'kjnkj', '212124', '1234', 124125125, 'kkk', 'dsfsk', 'aaa', 11, NULL),
+(19, 'model', 'Car', '1234', '1245', 15125, 'aaaa', 'afsaf', 'c', 11, NULL),
+(23, 'uyuy', 'Car', '34567', 'kjbkj', 456, 'iugu', 'vyuv', 'c', 11, 'a');
 
 -- --------------------------------------------------------
 
@@ -329,8 +324,17 @@ CREATE TABLE `vehicle_claims` (
   `accident_date` varchar(20) NOT NULL,
   `accident_time` varchar(20) NOT NULL,
   `venue` varchar(20) NOT NULL,
-  `casualties` int(11) NOT NULL
+  `casualties` int(100) NOT NULL,
+  `brokerid` int(11) NOT NULL,
+  `userId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `vehicle_claims`
+--
+
+INSERT INTO `vehicle_claims` (`id`, `vehicle_id`, `accident_date`, `accident_time`, `venue`, `casualties`, `brokerid`, `userId`) VALUES
+(5, 16, '2017-12-01', '11:21 AM', 'Hapugala', 21, 13, 11);
 
 -- --------------------------------------------------------
 
@@ -349,12 +353,6 @@ CREATE TABLE `vehicle_quatation` (
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `broker`
---
-ALTER TABLE `broker`
-  ADD PRIMARY KEY (`broker_ID`);
 
 --
 -- Indexes for table `building_claims`
@@ -378,12 +376,6 @@ ALTER TABLE `bulling_quatation`
   ADD KEY `c` (`customer_ID`);
 
 --
--- Indexes for table `clam_report`
---
-ALTER TABLE `clam_report`
-  ADD PRIMARY KEY (`Clam_ID`);
-
---
 -- Indexes for table `customer_request`
 --
 ALTER TABLE `customer_request`
@@ -391,37 +383,30 @@ ALTER TABLE `customer_request`
   ADD KEY `d` (`vehicle_id`),
   ADD KEY `x` (`broker_id`),
   ADD KEY `y` (`building_id`),
-  ADD KEY `z` (`customer_id`);
+  ADD KEY `z` (`customer_id`),
+  ADD KEY `mmm` (`quotation_id`),
+  ADD KEY `wefwegweg` (`policy_id`);
 
 --
 -- Indexes for table `photos`
 --
 ALTER TABLE `photos`
-  ADD PRIMARY KEY (`photo_id`);
+  ADD PRIMARY KEY (`photo_id`),
+  ADD KEY `xxx` (`buildingClaimId`),
+  ADD KEY `xxy` (`vehicleClaimId`);
 
 --
--- Indexes for table `poky_message`
+-- Indexes for table `policy`
 --
-ALTER TABLE `poky_message`
-  ADD PRIMARY KEY (`Message_ID`);
-
---
--- Indexes for table `policy_document`
---
-ALTER TABLE `policy_document`
-  ADD PRIMARY KEY (`Polidy_ID`);
+ALTER TABLE `policy`
+  ADD PRIMARY KEY (`policy_id`);
 
 --
 -- Indexes for table `premum`
 --
 ALTER TABLE `premum`
-  ADD PRIMARY KEY (`Premum_ID`);
-
---
--- Indexes for table `premum_details`
---
-ALTER TABLE `premum_details`
-  ADD PRIMARY KEY (`Premum_ID`);
+  ADD PRIMARY KEY (`Premum_ID`),
+  ADD KEY `fsdgsdgsdg` (`Quatation_ID`);
 
 --
 -- Indexes for table `privileges`
@@ -483,16 +468,10 @@ ALTER TABLE `vehicle_quatation`
 --
 
 --
--- AUTO_INCREMENT for table `broker`
---
-ALTER TABLE `broker`
-  MODIFY `broker_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `building_claims`
 --
 ALTER TABLE `building_claims`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `bulding`
@@ -501,46 +480,28 @@ ALTER TABLE `bulding`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `clam_report`
---
-ALTER TABLE `clam_report`
-  MODIFY `Clam_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `customer_request`
 --
 ALTER TABLE `customer_request`
-  MODIFY `Request_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `Request_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
--- AUTO_INCREMENT for table `poky_message`
+-- AUTO_INCREMENT for table `policy`
 --
-ALTER TABLE `poky_message`
-  MODIFY `Message_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `policy_document`
---
-ALTER TABLE `policy_document`
-  MODIFY `Polidy_ID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `policy`
+  MODIFY `policy_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `premum`
 --
 ALTER TABLE `premum`
-  MODIFY `Premum_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `premum_details`
---
-ALTER TABLE `premum_details`
-  MODIFY `Premum_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Premum_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `privileges`
@@ -558,25 +519,25 @@ ALTER TABLE `property`
 -- AUTO_INCREMENT for table `quotation`
 --
 ALTER TABLE `quotation`
-  MODIFY `Quotation_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Quotation_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `vehicle`
 --
 ALTER TABLE `vehicle`
-  MODIFY `vehicle_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `vehicle_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `vehicle_claims`
 --
 ALTER TABLE `vehicle_claims`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `vehicle_quatation`
@@ -607,9 +568,24 @@ ALTER TABLE `bulling_quatation`
 --
 ALTER TABLE `customer_request`
   ADD CONSTRAINT `d` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicle` (`vehicle_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `mmm` FOREIGN KEY (`quotation_id`) REFERENCES `quotation` (`Quotation_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `wefwegweg` FOREIGN KEY (`policy_id`) REFERENCES `policy` (`policy_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `x` FOREIGN KEY (`broker_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `y` FOREIGN KEY (`building_id`) REFERENCES `bulding` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `z` FOREIGN KEY (`customer_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `photos`
+--
+ALTER TABLE `photos`
+  ADD CONSTRAINT `xxx` FOREIGN KEY (`buildingClaimId`) REFERENCES `building_claims` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `xxy` FOREIGN KEY (`vehicleClaimId`) REFERENCES `vehicle_claims` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `premum`
+--
+ALTER TABLE `premum`
+  ADD CONSTRAINT `fsdgsdgsdg` FOREIGN KEY (`Quatation_ID`) REFERENCES `customer_request` (`Request_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users`
